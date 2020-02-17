@@ -1,0 +1,40 @@
+// simplemap.bsh
+
+// DESC: This is a very simple mapping.  It only changes a few fields.
+// DESC: using a few different methods.  This is a good script to start 
+// DESC: with if only a few or simple mapping changes are desired.
+// 
+// Please take a look at the default, passthrough bsh script to get a
+// description of all the fields.
+// 
+// Variables:
+// in_raw
+// in_hl7
+// is_hl7
+// out
+// log
+// ack
+
+out = in_hl7;
+// First, change MSH 5 and 6 to be "FOO" and "BAR" respectively.
+// This uses the object oriented interface.
+out.get("MSH").field(5).changeField("FOO");
+out.get("MSH").field(6).changeField("BAR");
+
+// Next we change the last and first names using a more traditional
+// interface.
+out.setField("PID:5-0-1", "LNAME");
+out.setField("PID:5-0-2", "FNAME");
+
+// The traditional get interface works as expected.
+lname = out.getField("PID:5-0-1");
+
+// The OO interface is preferred (and faster).  This is the name 
+// change using that interface.
+// out.get("PID").field(5).getComp(1).changeField("LNAME");
+// out.get("PID").field(5).getComp(2).changeField("FNAME");
+out.rebuild();
+
+log = "Before processing record was "+in_raw.length()+" bytes, and after "+
+    out.toString().length()+" bytes.";
+ack = true;

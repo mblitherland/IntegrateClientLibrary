@@ -1,0 +1,26 @@
+// createhl7frommrns.bsh
+
+// DESC: This script is designed to read MRNs in using a FileIn client, then
+// DESC: insert them into a template HL7 message with some other basic formatting.
+// DESC: It demonstrates some basic INIT functionality and some relatively
+// DESC: simple string manipulation.  The light HL7 library functionality could
+// DESC: also be used to create the outbound record, but this case is pretty
+// DESC: easy to do without it.
+
+// Variables:
+// in_raw - inbound message as a string
+// in_hl7 - inbound message as HL7
+// is_hl7 - if inbound message could be parsed as HL7
+// out    - will be read for outbound data
+// log    - a message to log in HL7 Comm
+// ack    - determines if message acked
+
+// only create the SDF object at load to go faster
+// INIT: sdf = new java.text.SimpleDateFormat("yyyyMMddHHmmss");
+
+out = "MSH|^~\\&|NULE|NULE|HOSPITAL|ITD|"+sdf.format(new Date());
+out += "||ADT^A04^|47799104|P|2.3|\rPID|||"+in_raw.trim();
+out += "^^^HOSPITAL^||BATCH^LOAD^MRN|\r" ;
+
+log = "Processed MRN: "+in_raw.trim();
+ack = true;

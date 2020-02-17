@@ -1,0 +1,54 @@
+// classpath.bsh
+
+// DESC: This script demonstrates added libraries to your classpath within
+// DESC: the script.  This is useful for accessing external resources
+// DESC: like a database or web service.  This example extracts the
+// DESC: patient name and medical record number and inserts it into a
+// DESC: MySQL database.  Obviously, this script won't work as expected unless
+// DESC: the database JDBC jar is where it is described to be below, and if
+// DESC: the database resource exists at the host below with the suggested
+// DESC: user, password and table.  This script has been tested and works,
+// DESC: for me, but considerable tweaking will be required for other users
+// DESC: so just remember that it is an example.
+//
+// Perform the actions necessary to setup the environment before calling on the
+// database functions.
+//
+// INIT: // Load the database jar - make sure your path is correct.
+// INIT: import java.sql.*;
+// INIT: URL[] url = new URL[1];
+// INIT: url[0] = new URL("file:///Users/mike/Jars/mysql-connector-java-5.1.6-bin.jar");
+// INIT: ClassLoader cl = new URLClassLoader(url);
+// INIT: Class c = cl.loadClass("com.mysql.jdbc.Driver");
+// INIT: Driver d = (Driver) c.newInstance();
+// INIT: Properties p = new Properties();
+// INIT: p.put("user", "hl7comm");
+// INIT: p.put("password", "hl7comm");
+// INIT: // Driver manager doesn't work with a custom class loader
+// INIT: Connection conn = d.connect("jdbc:mysql://10.0.1.2:3306/hl7comm", p);
+// 
+// Please take a look at the default, passthrough bsh script to get a
+// description of all the fields.
+// 
+// Variables:
+// in_raw
+// in_hl7
+// is_hl7
+// out
+// log
+// ack
+
+out = in_raw;
+ack = true;
+
+mrn = in_hl7.get("PID").field(3).toString();
+lname = in_hl7.get("PID").field(5).getComp(1).toString();
+fname = in_hl7.get("PID").field(5).getComp(2).toString();
+
+ps = conn.prepareStatement("insert into patients (mrn, lname, fname) values (?,?,?)");
+ps.setString(1, mrn);
+ps.setString(2, lname);
+ps.setString(3, fname);
+ps.execute();
+ps.close();
+

@@ -1,0 +1,41 @@
+// default.bsh
+
+// DESC: This is the basic passthrough beanshell script for HL7 Comm.
+// DESC: It is the bare minimum amount of logic required for the BshLogic
+// DESC: client to function.
+
+// The init section of script is called only once in normal operation. It
+// lets you setup persistent variables, alter the classpath and import classes.
+
+// INIT: // Don't do anything
+
+// Each of the sections below describes a variable provided to the script
+// when it runs.  Only the "out" and "ack" variables are checked upon
+// the script returning.  The behavoirs associated with the values of
+// those variables is described below.
+
+// in_raw
+// The inbound messages is stored verbatim in "in_raw".
+
+// in_hl7
+// If the message could be parsed into HL7 it is stored in "in_hl7".
+
+// is_hl7
+// Additionally "is_hl7" will be true if the message could be parsed, false
+// otherwise.
+
+// out
+// The outbound message will be read from the "out" variable after the script
+// returns.  The .toString() method will be called on that object.  If out is
+// null when the script returns, the inbound will be NACKed.
+out = in_raw;
+
+// log
+// If a string is put into the log variable, a message will be put into the
+// HL7 Comm log.
+log = "Processed a message";
+
+// ack
+// Lastly, the "ack" variable is checked after "out" is processed.  If true
+// the inbound will be ACKed, if false it will be NACKed.
+ack = true;

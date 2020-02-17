@@ -1,0 +1,33 @@
+// slowdowninit.bsh
+
+// DESC: This script is similar to the slowdown.bsh script except it uses the
+// DESC: init functionality to initialize a counter.  When the count surpasses
+// DESC: a specified value the sleep is performed and then processing resumes.
+// DESC: This is the simplest example of using the INIT block.
+
+// Please take a look at the default, passthrough bsh script to get a
+// description of all the fields.
+
+// Variables:
+// in_raw
+// in_hl7
+// is_hl7
+// out
+// log
+// ack
+
+// INIT: count = 0;
+
+if (count < 10) {
+    count++;
+    waitTime = 0; // Don't sleep
+} else {
+    count = 0;
+    waitTime = 5000; // Sleep 5 seconds
+}
+
+Thread.sleep(waitTime);
+
+out = in_raw;
+log = "Waited "+(waitTime / 1000.0)+" seconds";
+ack = true;

@@ -1,0 +1,82 @@
+// manualpause.bsh
+
+// DESC: This script demonstrates integrating some of Beanshell's features into
+// DESC: HL7 Comm.  Quite simply this script displays the inbound message in a
+// DESC: window and waits for you to hit a button before processing it.  This 
+// DESC: is conceiveably handy if you'd want to pause data as it arrives and
+// DESC: even interact with data while processing.  There's a note about changing
+// DESC: the script during processing below that you may wish to be aware of.
+
+// NOTE:
+// The script is passed as a string to the evaluation engine when a message 
+// arrives.  At that point it's too late to alter the actual script, but you could
+// change it while paused and the next incoming message would get the new script.
+// However, in this script the little GUI window we create is acting on the live
+// data in our script, therefore it is truly interactive to the data, even though
+// script changes in the window are ignored until the next message.
+
+// One more note... there are better ways to code some of the stuff in this
+// script, so consider it more illustrative than demonstrating prudent
+// coding practices.
+
+// Please take a look at the default, passthrough bsh script to get a
+// description of all the fields.
+
+// Variables:
+// in_raw
+// in_hl7
+// is_hl7
+// out
+// log
+// ack
+
+// Setup return variables
+out = in_raw;
+
+// A variable to watch for when the user has made an ack/nack decision.
+waiting = true;
+
+// Create a little GUI
+frame = new JFrame("HL7 Comm Beanshell Manual Pause");
+frame.setLayout(new BorderLayout());
+panel = new JPanel();
+panel.setLayout(new BorderLayout());
+ack = new JButton("ACK");
+ack.addActionListener(new ActionListener() {
+    actionPerformed(ae) {
+        ack = true;
+        waiting = false;
+    }
+});
+panel.add(ack, BorderLayout.WEST);
+nack = new JButton("NACK");
+nack.addActionListener(new ActionListener() {
+    actionPerformed(ae) {
+        ack = false;
+        waiting = false;
+    }
+});
+panel.add(nack, BorderLayout.EAST);
+frame.add(panel, BorderLayout.NORTH);
+text = new JTextArea();
+text.setEditable(false);
+text.setText(in_raw.replaceAll("\r", "\r\n"));
+frame.add(new JScrollPane(text), BorderLayout.CENTER);
+frame.pack();
+frame.setSize(800, 600);
+frame.setLocation(100, 100);
+frame.setVisible(true);
+
+// Wait for our user to select the return
+while (waiting) {
+    // Sleep .1 seconds and see if the user has decided yet.
+    Thread.sleep(100);
+}
+
+frame.dispose();
+// ack and out have been set already, so just log what happened
+if (ack) {
+    log = "User ACKed message";
+} else {
+    log = "User NACKed message";
+}

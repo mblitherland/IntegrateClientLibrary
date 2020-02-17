@@ -1,0 +1,26 @@
+// slowdown.bsh
+
+// DESC: This script performs the same functionality as the SlowdownLogic
+// DESC: client for the HL7 Comm.  If you had more advanced throttling
+// DESC: needs than specifying an absolute maximum rate (such as specifying
+// DESC: a maximum average rate over time), then this is a good template
+// DESC: to start with.
+
+// Please take a look at the default, passthrough bsh script to get a
+// description of all the fields.
+
+// Variables:
+// in_raw
+// in_hl7
+// is_hl7
+// out
+// log
+// ack
+
+waitTime = 5000; // Sleep 5 seconds
+
+Thread.sleep(waitTime);
+
+out = in_raw;
+log = "Waited "+(waitTime / 1000.0)+" seconds";
+ack = true;

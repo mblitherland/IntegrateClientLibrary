@@ -1,0 +1,14 @@
+// minimal.bsh
+
+// DESC: Just like default, but without the verbose comments.
+
+// Variables:
+// in_raw - inbound message as a string
+// in_hl7 - inbound message as HL7
+// is_hl7 - if inbound message could be parsed as HL7
+// out    - will be read for outbound data
+// log    - a message to log in HL7 Comm
+// ack    - determines if message acked
+
+out = in_raw;
+ack = true;

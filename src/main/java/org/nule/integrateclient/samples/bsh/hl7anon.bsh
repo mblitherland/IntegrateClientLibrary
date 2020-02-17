@@ -1,0 +1,54 @@
+// hl7anon.bsh
+
+// DESC: This script performs roughly the same function as my HL7 Anon
+// DESC: utility, but doesn't perform a second pass in an attempt to
+// DESC: thoroughly scrub the data.  It demonstrates relatively simple
+// DESC: looping and some of the more advanced Light HL7 Library
+// DESC: methods.
+
+// Please take a look at the default, passthrough bsh script to get a
+// description of all the fields.
+
+// Variables:
+// in_raw
+// in_hl7
+// is_hl7
+// out
+// log
+// ack
+
+String[] defaultFields = { "PID:2", "PID:3", "PID:5", "PID:7", 
+    "PID:9", "PID:11", "PID:13", "PID:18", "PID:19", "PID:20", "NK1:2", 
+    "NK1:4", "NK1:5", "NK1:6", "NK1:12", "MRG:7", "IN1:16", "IN1:19", 
+    "GT1:3", "GT1:4", "GT1:5", "GT1:6", "GT1:12", "GT1:19"};
+
+if (!is_hl7) {
+    out = "";
+    ack = false;
+    return;
+}
+
+out = in_hl7;
+
+for (i = 0; i < defaultFields.length; i++) {
+    field = defaultFields[i];
+    String replace = out.getField(field);
+    if (replace != null && !replace.equals("")) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < replace.length(); i++) {
+            char c = replace.charAt(i);
+            if (Character.isDigit(c)) {
+                sb.append("8");
+            } else if (Character.isLetter(c)) {
+                sb.append("X");
+            } else {
+                sb.append(c);
+            }
+        }
+        out.setField(field, sb.toString());
+    }
+}
+
+out.rebuild();
+log = "Processed message of length "+out.toString().length();
+ack = true;
